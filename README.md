@@ -3,8 +3,8 @@
 **Curso:** IF0009 - Desarrollo de Software IV
 **Ciclo:** II-2026
 **Profesor:** Mag. Jonathan Granados C.
-**Estudiante:** Josué Méndez Sanabria
-**Carné:** c5h060
+**Estudiante:** Josué Méndez Sanabria/Roger Dario Mora Piedra
+**Carné:** c5h060/c5h489
 
 ## Requisitos de entorno
 
