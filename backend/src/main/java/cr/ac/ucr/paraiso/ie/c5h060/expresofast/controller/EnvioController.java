@@ -1,13 +1,26 @@
 package cr.ac.ucr.paraiso.ie.c5h060.expresofast.controller;
 
-import cr.ac.ucr.paraiso.ie.c5h060.expresofast.business.EnvioService;
-import cr.ac.ucr.paraiso.ie.c5h060.expresofast.domain.Envio;
-import cr.ac.ucr.paraiso.ie.c5h060.expresofast.dto.ActualizarEstadoRequest;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import cr.ac.ucr.paraiso.ie.c5h060.expresofast.business.EnvioService;
+import cr.ac.ucr.paraiso.ie.c5h060.expresofast.domain.Envio;
+import cr.ac.ucr.paraiso.ie.c5h060.expresofast.dto.BitacoraResponseDTO;
+import cr.ac.ucr.paraiso.ie.c5h060.expresofast.dto.CambioEstadoDTO;
+import cr.ac.ucr.paraiso.ie.c5h060.expresofast.dto.EnvioMapper;
+import cr.ac.ucr.paraiso.ie.c5h060.expresofast.dto.EnvioRequestDTO;
+import cr.ac.ucr.paraiso.ie.c5h060.expresofast.dto.EnvioResponseDTO;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/envios")
@@ -21,32 +34,28 @@ public class EnvioController {
     }
 
     @GetMapping("/optimizados")
-    public ResponseEntity<List<Envio>> obtenerEnviosOptimizados() {
+    public ResponseEntity<List<EnvioResponseDTO>> obtenerEnviosOptimizados() {
         List<Envio> envios = envioService.obtenerEnviosOptimizados();
-        return ResponseEntity.ok(envios);
+        return ResponseEntity.ok(EnvioMapper.toResponseDTOList(envios));
     }
 
-    /**
-     * {
-     * "codigoRastreo": "1",
-     * "direccionDestino": "Cartago",
-     * "pesoKg": 10.0,
-     * "costo": 3500.00,
-     * "vehiculo": { "id": 1 },
-     * "conductor": { "id": 1 }
-     * }
-     */
-
     @PostMapping
-    public ResponseEntity<Envio> registrarEnvio(@RequestBody Envio envio) {
-        Envio envioCreado = envioService.registrarEnvio(envio);
-        return ResponseEntity.status(HttpStatus.CREATED).body(envioCreado);
+    public ResponseEntity<EnvioResponseDTO> registrarEnvio(@Valid @RequestBody EnvioRequestDTO dto) {
+        Envio envioCreado = envioService.registrarEnvio(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(EnvioMapper.toResponseDTO(envioCreado));
     }
 
     @PatchMapping("/{id}/estado")
-    public ResponseEntity<Envio> actualizarEstado(@PathVariable("id") Integer id,
-            @RequestBody ActualizarEstadoRequest request) {
-        Envio envioActualizado = envioService.actualizarEstado(id, request.estado());
-        return ResponseEntity.ok(envioActualizado);
+    public ResponseEntity<EnvioResponseDTO> actualizarEstado(@PathVariable("id") Integer id,
+            @Valid @RequestBody CambioEstadoDTO dto) {
+        Envio envioActualizado = envioService.actualizarEstado(id, dto.nuevoEstado(), dto.observaciones());
+        return ResponseEntity.ok(EnvioMapper.toResponseDTO(envioActualizado));
+    }
+
+    @GetMapping("/{id}/bitacora")
+    public ResponseEntity<List<BitacoraResponseDTO>> obtenerBitacora(@PathVariable("id") Integer id) {
+        List<BitacoraResponseDTO> bitacora =
+                EnvioMapper.toBitacoraResponseDTOList(envioService.obtenerBitacora(id));
+        return ResponseEntity.ok(bitacora);
     }
 }
