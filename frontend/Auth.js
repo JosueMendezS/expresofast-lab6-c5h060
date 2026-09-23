@@ -2,23 +2,35 @@
 const API_BASE_URL = 'http://localhost:8080';
 
 const CLAVE_TOKEN = 'jwt_token';
-const CLAVE_USERNAME = 'jwt_username';
-const CLAVE_ROLES = 'jwt_roles';
 
 function obtenerToken() {
-    return localStorage.getItem(CLAVE_TOKEN);
+    return sessionStorage.getItem(CLAVE_TOKEN);
+}
+
+// Decodifica el "payload" (segunda parte) de un JWT en base64url.
+// No valida la firma: solo se usa para leer datos en el cliente (usuario y roles).
+function decodificarJWT(token) {
+    try {
+        const payloadBase64 = token.split('.')[1];
+        const payloadJson = atob(payloadBase64.replace(/-/g, '+').replace(/_/g, '/'));
+        return JSON.parse(payloadJson);
+    } catch (error) {
+        return null;
+    }
 }
 
 function obtenerUsername() {
-    return localStorage.getItem(CLAVE_USERNAME) || '';
+    const token = obtenerToken();
+    if (!token) return '';
+    const payload = decodificarJWT(token);
+    return (payload && payload.sub) || '';
 }
 
 function obtenerRoles() {
-    try {
-        return JSON.parse(localStorage.getItem(CLAVE_ROLES)) || [];
-    } catch (error) {
-        return [];
-    }
+    const token = obtenerToken();
+    if (!token) return [];
+    const payload = decodificarJWT(token);
+    return (payload && payload.roles) || [];
 }
 
 function tieneRol(rol) {
@@ -37,30 +49,24 @@ function esConductor() {
     return tieneRol('ROLE_CONDUCTOR');
 }
 
-
 function guardarSesion(authResponseDTO) {
-    localStorage.setItem(CLAVE_TOKEN, authResponseDTO.token);
-    localStorage.setItem(CLAVE_USERNAME, authResponseDTO.username);
-    localStorage.setItem(CLAVE_ROLES, JSON.stringify(authResponseDTO.roles || []));
+    sessionStorage.setItem(CLAVE_TOKEN, authResponseDTO.token);
 }
 
 function limpiarSesion() {
-    localStorage.removeItem(CLAVE_TOKEN);
-    localStorage.removeItem(CLAVE_USERNAME);
-    localStorage.removeItem(CLAVE_ROLES);
+    sessionStorage.removeItem(CLAVE_TOKEN);
 }
 
 function cerrarSesion() {
     limpiarSesion();
-    window.location.href = 'login.html';
+    window.location.href = 'index.html';
 }
 
 function exigirSesion() {
     if (!obtenerToken()) {
-        window.location.href = 'login.html';
+        window.location.href = 'index.html';
     }
 }
-
 
 async function fetchWithAuth(url, options = {}) {
     const headers = {
@@ -73,7 +79,7 @@ async function fetchWithAuth(url, options = {}) {
 
     if (respuesta.status === 401 || respuesta.status === 403) {
         limpiarSesion();
-        window.location.href = 'login.html';
+        window.location.href = 'index.html';
         throw new Error('Sesión expirada o sin permisos. Redirigiendo al login…');
     }
 

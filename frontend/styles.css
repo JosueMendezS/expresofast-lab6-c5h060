@@ -462,3 +462,108 @@ body {
 .tabla-flota th {
     background-color: var(--color-fondo);
 }
+/* ---------------------------------------------------------------------
+   Navegación principal (filtros + vistas) - Laboratorio 8
+--------------------------------------------------------------------- */
+.filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    background-color: white;
+    border-bottom: 1px solid var(--color-borde);
+    padding: 10px 20px;
+}
+
+.nav__separador {
+    color: var(--color-borde);
+}
+
+/* ---------------------------------------------------------------------
+   Sección de KPIs (#kpiSection)
+--------------------------------------------------------------------- */
+.kpi-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.kpi-card {
+    background-color: white;
+    border: 1px solid var(--color-borde);
+    border-radius: 6px;
+    padding: 15px;
+    text-align: center;
+}
+
+.kpi-card__label {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+.kpi-card__valor {
+    margin: 5px 0 0;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--color-primario);
+}
+
+/* ---------------------------------------------------------------------
+   Aside de bitácora (solo ROLE_ADMIN)
+--------------------------------------------------------------------- */
+#asideBitacora {
+    width: 280px;
+}
+
+.sidebar__hint {
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+/* ---------------------------------------------------------------------
+   Footer institucional
+--------------------------------------------------------------------- */
+.footer-institucional {
+    background-color: var(--color-oscuro);
+    color: white;
+    text-align: center;
+    padding: 15px;
+    font-size: 0.8rem;
+}
+
+.footer-institucional a {
+    color: white;
+}
+
+/* ---------------------------------------------------------------------
+   Diseño adaptativo (Mobile-First / Media Queries)
+--------------------------------------------------------------------- */
+@media (max-width: 768px) {
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .filtros {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .layout {
+        flex-direction: column;
+    }
+
+    .sidebar,
+    #asideBitacora {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--color-borde);
+    }
+
+    .kpi-section {
+        grid-template-columns: 1fr;
+    }
+}

@@ -36,12 +36,12 @@ public class Envio extends AuditableEntity {
     @Column(name = "estado_envio", nullable = false, length = 20)
     private String estadoEnvio;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "vehiculo_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "vehiculo_id")
     private Vehiculo vehiculo;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "conductor_id", nullable = false)
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "conductor_id")
     private Conductor conductor;
 
 }

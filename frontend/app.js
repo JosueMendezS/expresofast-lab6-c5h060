@@ -5,7 +5,7 @@ let enviosCache = [];
 let filtroActivo = 'TODOS';
 let bitacoraCache = [];
 
-const gridEnvios = document.getElementById('gridEnvios');
+const gridEnvios = document.getElementById('enviosGrid');
 const boardSubtitulo = document.getElementById('boardSubtitulo');
 const formEnvio = document.getElementById('formEnvio');
 const formFeedback = document.getElementById('formFeedback');
@@ -38,6 +38,9 @@ function inicializarSesion() {
     }
 
     document.getElementById('tabFlota').hidden = !esAdmin();
+
+    // <aside> de bitácora: solo visible para ROLE_ADMIN
+    document.getElementById('asideBitacora').hidden = !esAdmin();
 
     document.getElementById('btnLogout').addEventListener('click', cerrarSesion);
 }
@@ -163,9 +166,27 @@ function actualizarResumen() {
     enviosCache.forEach((e) => {
         if (conteo[e.estadoEnvio] !== undefined) conteo[e.estadoEnvio]++;
     });
-    document.getElementById('countPendiente').textContent = conteo.PENDIENTE;
-    document.getElementById('countTransito').textContent = conteo.EN_TRANSITO;
-    document.getElementById('countEntregado').textContent = conteo.ENTREGADO;
+    document.getElementById('kpiTotalEnvios').textContent = enviosCache.length;
+    document.getElementById('kpiEntregados').textContent = conteo.ENTREGADO;
+    actualizarKpiVehiculosActivos();
+}
+
+// El KPI de vehículos activos solo se puede consultar contra /api/vehiculos,
+// endpoint restringido a ROLE_ADMIN, así que para los demás roles se deja en "—".
+async function actualizarKpiVehiculosActivos() {
+    const kpiVehiculos = document.getElementById('kpiVehiculosActivos');
+    if (!esAdmin()) {
+        kpiVehiculos.textContent = '—';
+        return;
+    }
+    try {
+        const respuesta = await fetchWithAuth(API_VEHICULOS);
+        const vehiculos = await respuesta.json();
+        const activos = vehiculos.filter((v) => v.estado !== 'MANTENIMIENTO').length;
+        kpiVehiculos.textContent = activos;
+    } catch (error) {
+        kpiVehiculos.textContent = '—';
+    }
 }
 
 document.querySelectorAll('.filtro-tab').forEach((boton) => {
