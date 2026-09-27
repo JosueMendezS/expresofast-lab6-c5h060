@@ -14,6 +14,9 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Entity
 @Table(name = "Envio")
+@NamedStoredProcedureQuery(name = "Envio.obtenerPorEstado", procedureName = "SP_OBTENER_ENVIOS_POR_ESTADO", resultClasses = Envio.class, parameters = {
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "pEstado", type = String.class)
+})
 public class Envio extends AuditableEntity {
 
     @Id
@@ -39,7 +42,7 @@ public class Envio extends AuditableEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "vehiculo_id")
     private Vehiculo vehiculo;
-    
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "conductor_id")
     private Conductor conductor;

@@ -23,11 +23,18 @@ import cr.ac.ucr.paraiso.ie.c5h060.expresofast.dto.EnvioRequestDTO;
 import cr.ac.ucr.paraiso.ie.c5h060.expresofast.exception.InvalidStateTransitionException;
 import cr.ac.ucr.paraiso.ie.c5h060.expresofast.exception.ResourceNotFoundException;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
+import cr.ac.ucr.paraiso.ie.c5h060.expresofast.dto.EnvioDTO;
+import cr.ac.ucr.paraiso.ie.c5h060.expresofast.dto.EnvioMapper;
+
 @Service
 public class EnvioService {
 
     private static final Set<String> ESTADOS_VALIDOS = Set.of("PENDIENTE", "EN_TRANSITO", "ENTREGADO", "CANCELADO");
-    // Reto autonomo: un envio en estado final ya no puede "retroceder".
     private static final Set<String> ESTADOS_FINALES = Set.of("ENTREGADO", "CANCELADO");
     private static final Set<String> ESTADOS_NO_REGRESABLES = Set.of("PENDIENTE", "EN_TRANSITO");
 
@@ -96,7 +103,7 @@ public class EnvioService {
 
         String estadoAnterior = envio.getEstadoEnvio();
 
-        // Reto autonomo: bloquear transicion invalida (ENTREGADO/CANCELADO -> PENDIENTE/EN_TRANSITO)
+  
         if (ESTADOS_FINALES.contains(estadoAnterior) && ESTADOS_NO_REGRESABLES.contains(estadoNormalizado)) {
             throw new InvalidStateTransitionException(
                     "Transición de estado no permitida para el envío " + envio.getCodigoRastreo());
@@ -132,5 +139,41 @@ public class EnvioService {
         String username = autenticacion.getName();
         return usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado: " + username));
+    }
+
+    // Lab 9
+
+    @Transactional(readOnly = true)
+    public Page<EnvioDTO> listarPaginado(int page, int size, String sortBy, String dir,
+            String busqueda, String estado) {
+
+        String campoOrden = (sortBy == null || sortBy.isBlank()) ? "fechaCreacion" : sortBy;
+        Sort.Direction direccion = "asc".equalsIgnoreCase(dir) ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direccion, campoOrden));
+
+        Page<Envio> pagina;
+
+        if (estado != null && !estado.isBlank()) {
+            pagina = envioRepository.findByEstadoEnvio(estado.trim().toUpperCase(), pageable);
+        } else if (busqueda != null && !busqueda.isBlank()) {
+            pagina = envioRepository.findByDireccionDestinoContainingIgnoreCase(busqueda.trim(), pageable);
+        } else {
+            pagina = envioRepository.findAll(pageable);
+        }
+
+        return pagina.map(EnvioMapper::toEnvioDTO);
+    }
+
+    @Transactional(readOnly = true)
+    public List<EnvioDTO> listarViaStoredProcedure(String estado) {
+        String estadoNormalizado = estado == null ? null : estado.trim().toUpperCase();
+
+        if (estadoNormalizado == null || !ESTADOS_VALIDOS.contains(estadoNormalizado)) {
+            throw new InvalidStateTransitionException(
+                    "Estado invalido para el procedimiento almacenado: " + estado);
+        }
+
+        List<Envio> envios = envioRepository.obtenerEnviosPorEstadoSP(estadoNormalizado);
+        return EnvioMapper.toEnvioDTOList(envios);
     }
 }
