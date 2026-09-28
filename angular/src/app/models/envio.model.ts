@@ -13,7 +13,7 @@ export interface Envio {
 export interface CrearEnvioPayload {
   direccionDestino: string;
   pesoKg: number;
-  costo: number;
+  montoFlete: number;
   vehiculoId: number;
   conductorId: number;
 }

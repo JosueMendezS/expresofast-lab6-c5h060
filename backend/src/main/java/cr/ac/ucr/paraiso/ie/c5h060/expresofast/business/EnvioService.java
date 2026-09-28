@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,8 @@ import cr.ac.ucr.paraiso.ie.c5h060.expresofast.dto.EnvioDTO;
 import cr.ac.ucr.paraiso.ie.c5h060.expresofast.dto.EnvioMapper;
 
 import cr.ac.ucr.paraiso.ie.c5h060.expresofast.dto.CrearEnvioDTO;
+
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 
 @Service
 public class EnvioService {
@@ -113,17 +116,23 @@ public class EnvioService {
         envio.setEstadoEnvio(estadoNormalizado);
         envioRepository.save(envio);
 
-        Usuario usuarioActual = obtenerUsuarioAutenticado();
+        Authentication autenticacion = SecurityContextHolder.getContext().getAuthentication();
+        boolean hayUsuario = autenticacion != null
+                && autenticacion.isAuthenticated()
+                && !(autenticacion instanceof AnonymousAuthenticationToken);
 
-        BitacoraEnvio bitacora = new BitacoraEnvio();
-        bitacora.setEnvio(envio);
-        bitacora.setEstadoAnterior(estadoAnterior);
-        bitacora.setEstadoNuevo(estadoNormalizado);
-        bitacora.setFechaCambio(LocalDateTime.now());
-        bitacora.setUsuario(usuarioActual);
-        bitacora.setObservaciones(observaciones);
-        bitacoraEnvioRepository.save(bitacora);
+        if (hayUsuario) {
+            Usuario usuarioActual = obtenerUsuarioAutenticado();
 
+            BitacoraEnvio bitacora = new BitacoraEnvio();
+            bitacora.setEnvio(envio);
+            bitacora.setEstadoAnterior(estadoAnterior);
+            bitacora.setEstadoNuevo(estadoNormalizado);
+            bitacora.setFechaCambio(LocalDateTime.now());
+            bitacora.setUsuario(usuarioActual);
+            bitacora.setObservaciones(observaciones);
+            bitacoraEnvioRepository.save(bitacora);
+        }
         return envio;
     }
 

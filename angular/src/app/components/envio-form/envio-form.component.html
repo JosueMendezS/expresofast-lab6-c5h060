@@ -14,8 +14,7 @@
 
     <label>
       Monto de flete (₡)
-      <input type="number" [(ngModel)]="payload.costo" name="costo" required />
-    </label>
+      <input type="number" [(ngModel)]="payload.montoFlete" name="montoFlete" required /> </label>
 
     <label>
       ID Vehículo
@@ -31,10 +30,10 @@
   </form>
 
   @if (mensajeExito) {
-    <p class="ok">{{ mensajeExito }}</p>
+  <p class="ok">{{ mensajeExito }}</p>
   }
 
   @if (mensajeError) {
-    <p class="error">{{ mensajeError }}</p>
+  <p class="error">{{ mensajeError }}</p>
   }
 </section>

@@ -19,7 +19,7 @@ export class EnvioFormComponent {
   payload: CrearEnvioPayload = {
     direccionDestino: '',
     pesoKg: 0,
-    costo: 0,
+    montoFlete: 0,
     vehiculoId: 0,
     conductorId: 0
   };
@@ -31,8 +31,8 @@ export class EnvioFormComponent {
     this.mensajeExito = '';
     this.mensajeError = '';
 
-    if (!this.payload.direccionDestino || this.payload.pesoKg <= 0 || this.payload.costo <= 0
-        || !this.payload.vehiculoId || !this.payload.conductorId) {
+    if (!this.payload.direccionDestino || this.payload.pesoKg <= 0 || this.payload.montoFlete <= 0
+      || !this.payload.vehiculoId || !this.payload.conductorId) {
       this.mensajeError = 'Complete todos los campos obligatorios.';
       return;
     }
