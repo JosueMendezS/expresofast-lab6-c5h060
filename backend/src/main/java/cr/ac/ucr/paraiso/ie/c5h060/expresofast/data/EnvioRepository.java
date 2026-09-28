@@ -35,4 +35,11 @@ public interface EnvioRepository extends JpaRepository<Envio, Integer> {
         Page<Envio> findByEstadoEnvio(String estadoEnvio, Pageable pageable);
 
         Page<Envio> findByDireccionDestinoContainingIgnoreCase(String busqueda, Pageable pageable);
+
+        // Lab 10
+
+        java.util.Optional<Envio> findByCodigoRastreo(String codigoRastreo);
+
+        boolean existsByCodigoRastreo(String codigoRastreo);
+        
 }

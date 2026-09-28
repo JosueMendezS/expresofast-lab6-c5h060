@@ -1,0 +1,10 @@
+.envio-list { padding: 20px; }
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th, td { padding: 8px 10px; border-bottom: 1px solid #d1d5db; text-align: left; }
+th { background: #1f2937; color: white; }
+.error { color: #dc2626; }
+.badge { padding: 3px 10px; border-radius: 12px; color: white; font-size: 0.8rem; }
+.badge--pendiente { background: #d97706; }
+.badge--en_transito { background: #2563eb; }
+.badge--entregado { background: #16a34a; }
+.badge--cancelado { background: #dc2626; }

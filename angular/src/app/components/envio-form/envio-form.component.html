@@ -1,0 +1,40 @@
+<section class="envio-form">
+  <h2>Registrar Nuevo Envío</h2>
+
+  <form (ngSubmit)="registrar()">
+    <label>
+      Dirección destino
+      <input type="text" [(ngModel)]="payload.direccionDestino" name="direccionDestino" required />
+    </label>
+
+    <label>
+      Peso (kg)
+      <input type="number" [(ngModel)]="payload.pesoKg" name="pesoKg" required />
+    </label>
+
+    <label>
+      Monto de flete (₡)
+      <input type="number" [(ngModel)]="payload.costo" name="costo" required />
+    </label>
+
+    <label>
+      ID Vehículo
+      <input type="number" [(ngModel)]="payload.vehiculoId" name="vehiculoId" required />
+    </label>
+
+    <label>
+      ID Conductor
+      <input type="number" [(ngModel)]="payload.conductorId" name="conductorId" required />
+    </label>
+
+    <button type="submit">Registrar envío</button>
+  </form>
+
+  @if (mensajeExito) {
+    <p class="ok">{{ mensajeExito }}</p>
+  }
+
+  @if (mensajeError) {
+    <p class="error">{{ mensajeError }}</p>
+  }
+</section>

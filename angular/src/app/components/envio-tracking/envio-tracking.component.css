@@ -1,0 +1,8 @@
+.envio-tracking { padding: 20px; max-width: 480px; }
+.envio-tracking form { display: flex; gap: 8px; margin-bottom: 16px; }
+.envio-tracking input { flex: 1; padding: 8px; border: 1px solid #d1d5db; }
+.envio-tracking button { padding: 8px 16px; background: #2563eb; color: white; border: none; cursor: pointer; }
+.error { color: #dc2626; }
+.ficha { border: 1px solid #d1d5db; border-radius: 6px; padding: 16px; }
+.barra-progreso { background: #e5e7eb; border-radius: 8px; height: 14px; margin-top: 12px; overflow: hidden; }
+.barra-progreso__relleno { background: #16a34a; height: 100%; transition: width 0.3s ease; }

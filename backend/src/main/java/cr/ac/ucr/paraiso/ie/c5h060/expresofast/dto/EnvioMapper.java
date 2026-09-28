@@ -24,7 +24,8 @@ public final class EnvioMapper {
                 envio.getCosto(),
                 envio.getEstadoEnvio(),
                 placaVehiculo,
-                nombreConductor);
+                nombreConductor,
+                envio.getFechaCreacion());
     }
 
     public static List<EnvioResponseDTO> toResponseDTOList(List<Envio> envios) {

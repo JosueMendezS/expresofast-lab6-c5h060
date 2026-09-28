@@ -31,6 +31,8 @@ import org.springframework.data.domain.Sort;
 import cr.ac.ucr.paraiso.ie.c5h060.expresofast.dto.EnvioDTO;
 import cr.ac.ucr.paraiso.ie.c5h060.expresofast.dto.EnvioMapper;
 
+import cr.ac.ucr.paraiso.ie.c5h060.expresofast.dto.CrearEnvioDTO;
+
 @Service
 public class EnvioService {
 
@@ -103,7 +105,6 @@ public class EnvioService {
 
         String estadoAnterior = envio.getEstadoEnvio();
 
-  
         if (ESTADOS_FINALES.contains(estadoAnterior) && ESTADOS_NO_REGRESABLES.contains(estadoNormalizado)) {
             throw new InvalidStateTransitionException(
                     "Transición de estado no permitida para el envío " + envio.getCodigoRastreo());
@@ -176,4 +177,43 @@ public class EnvioService {
         List<Envio> envios = envioRepository.obtenerEnviosPorEstadoSP(estadoNormalizado);
         return EnvioMapper.toEnvioDTOList(envios);
     }
+
+    // lab 10
+
+    @Transactional(readOnly = true)
+    public List<Envio> listarTodos() {
+        return envioRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Envio buscarPorCodigoRastreo(String codigo) {
+        return envioRepository.findByCodigoRastreo(codigo)
+                .orElseThrow(() -> new ResourceNotFoundException("No existe el envio con codigo " + codigo));
+    }
+
+    @Transactional
+    public Envio registrarEnvioDesdeAngular(CrearEnvioDTO dto) {
+        String codigoGenerado = generarCodigoRastreoUnico();
+
+        EnvioRequestDTO dtoInterno = new EnvioRequestDTO(
+                codigoGenerado,
+                dto.direccionDestino(),
+                dto.pesoKg(),
+                dto.montoFlete(),
+                dto.vehiculoId(),
+                dto.conductorId());
+
+        return registrarEnvio(dtoInterno);
+    }
+
+    private String generarCodigoRastreoUnico() {
+        String codigo;
+        long secuencia = envioRepository.count() + 1000;
+        do {
+            secuencia++;
+            codigo = "EXP-2026-" + secuencia;
+        } while (envioRepository.existsByCodigoRastreo(codigo));
+        return codigo;
+    }
+
 }

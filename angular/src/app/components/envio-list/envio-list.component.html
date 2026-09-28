@@ -1,0 +1,46 @@
+<section class="envio-list">
+  <h2>Envíos</h2>
+
+  @if (cargando) {
+    <p>Cargando...</p>
+  }
+
+  @if (error) {
+    <p class="error">{{ error }}</p>
+  }
+
+  <table>
+    <thead>
+      <tr>
+        <th>Rastreo</th>
+        <th>Conductor</th>
+        <th>Dirección</th>
+        <th>Flete</th>
+        <th>Estado</th>
+        <th>Cambiar estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (envio of envios; track envio.id) {
+        <tr>
+          <td>{{ envio.codigoRastreo }}</td>
+          <td>{{ envio.nombreConductor }}</td>
+          <td>{{ envio.direccionDestino }}</td>
+          <td>₡{{ envio.costo }}</td>
+          <td><span [class]="claseEstado(envio.estadoEnvio)">{{ envio.estadoEnvio }}</span></td>
+          <td>
+            <select [(ngModel)]="envio.estadoEnvio" (change)="cambiarEstado(envio, envio.estadoEnvio)">
+              @for (estado of estadosDisponibles; track estado) {
+                <option [value]="estado">{{ estado }}</option>
+              }
+            </select>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  @if (!cargando && envios.length === 0) {
+    <p>No hay envíos registrados.</p>
+  }
+</section>

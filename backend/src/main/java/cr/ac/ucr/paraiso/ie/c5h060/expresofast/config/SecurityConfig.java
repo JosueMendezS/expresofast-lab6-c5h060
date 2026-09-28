@@ -81,9 +81,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/envios").hasAnyRole("ADMIN", "OPERADOR")
                         .requestMatchers(HttpMethod.PATCH, "/api/envios/*/estado").hasAnyRole("ADMIN", "CONDUCTOR")
                         .requestMatchers(HttpMethod.GET, "/api/envios/*/bitacora").hasAnyRole("ADMIN", "OPERADOR")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/envios").hasAnyRole("ADMIN", "OPERADOR", "CONDUCTOR")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/envios/procedimiento/**")
-                        .hasAnyRole("ADMIN", "OPERADOR", "CONDUCTOR")
+                        .requestMatchers("/api/v1/envios/**").permitAll()
                         .requestMatchers("/api/vehiculos/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptions -> exceptions

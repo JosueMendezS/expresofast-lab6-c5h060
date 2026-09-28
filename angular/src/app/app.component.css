@@ -1,0 +1,10 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: #1f2937;
+  padding: 15px 20px;
+}
+.navbar__brand { color: white; font-weight: bold; margin-right: 20px; }
+.navbar a { color: white; text-decoration: none; padding: 6px 10px; }
+.navbar a.is-active { background: #2563eb; border-radius: 4px; }

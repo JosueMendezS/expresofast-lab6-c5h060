@@ -1,0 +1,27 @@
+<section class="envio-tracking">
+  <h2>Rastrear Guía</h2>
+
+  <form (ngSubmit)="buscar()">
+    <input type="text" [(ngModel)]="codigo" name="codigo" placeholder="Ej: EXP-2026-1001" />
+    <button type="submit">Buscar</button>
+  </form>
+
+  @if (error) {
+    <p class="error">{{ error }}</p>
+  }
+
+  @if (envio) {
+    <div class="ficha">
+      <h3>{{ envio.codigoRastreo }}</h3>
+      <p><strong>Destino:</strong> {{ envio.direccionDestino }}</p>
+      <p><strong>Conductor:</strong> {{ envio.nombreConductor }}</p>
+      <p><strong>Vehículo:</strong> {{ envio.placaVehiculo }}</p>
+      <p><strong>Flete:</strong> ₡{{ envio.costo }}</p>
+      <p><strong>Estado:</strong> {{ envio.estadoEnvio }}</p>
+
+      <div class="barra-progreso">
+        <div class="barra-progreso__relleno" [style.width.%]="progreso()"></div>
+      </div>
+    </div>
+  }
+</section>

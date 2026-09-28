@@ -15,7 +15,7 @@ import cr.ac.ucr.paraiso.ie.c5h060.expresofast.dto.EnvioDTO;
 import cr.ac.ucr.paraiso.ie.c5h060.expresofast.dto.PaginaEnvioDTO;
 
 @RestController
-@RequestMapping("/api/v1/envios")
+@RequestMapping("/api/v1/envios/paginado")
 public class EnvioPaginadoController {
 
     private final EnvioService envioService;

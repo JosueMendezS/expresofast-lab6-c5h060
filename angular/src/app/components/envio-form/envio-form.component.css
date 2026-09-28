@@ -1,0 +1,7 @@
+.envio-form { padding: 20px; max-width: 420px; }
+.envio-form form { display: flex; flex-direction: column; gap: 12px; }
+.envio-form label { display: flex; flex-direction: column; font-size: 0.9rem; gap: 4px; }
+.envio-form input { padding: 8px; border: 1px solid #d1d5db; }
+.envio-form button { padding: 10px; background: #2563eb; color: white; border: none; cursor: pointer; }
+.ok { color: #16a34a; }
+.error { color: #dc2626; }
