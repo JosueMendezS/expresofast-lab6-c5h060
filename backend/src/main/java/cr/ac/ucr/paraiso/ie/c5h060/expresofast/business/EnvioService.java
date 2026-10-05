@@ -36,6 +36,11 @@ import cr.ac.ucr.paraiso.ie.c5h060.expresofast.dto.CrearEnvioDTO;
 
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 
+import cr.ac.ucr.paraiso.ie.c5h060.expresofast.dto.EnvioRegistroDTO;
+import cr.ac.ucr.paraiso.ie.c5h060.expresofast.dto.PaqueteDTO;
+import cr.ac.ucr.paraiso.ie.c5h060.expresofast.domain.Paquete;
+import java.math.BigDecimal;
+
 @Service
 public class EnvioService {
 
@@ -223,6 +228,65 @@ public class EnvioService {
             codigo = "EXP-2026-" + secuencia;
         } while (envioRepository.existsByCodigoRastreo(codigo));
         return codigo;
+    }
+
+    // Lab 11
+
+    @Transactional(readOnly = true)
+    public boolean existeTracking(String numeroTracking) {
+        return numeroTracking != null && envioRepository.existsByCodigoRastreo(numeroTracking.trim());
+    }
+
+    @Transactional
+    public Envio registrarEnvioConPaquetes(EnvioRegistroDTO dto) {
+        String tracking = dto.numeroTracking().trim();
+
+        if (envioRepository.existsByCodigoRastreo(tracking)) {
+            throw new InvalidStateTransitionException("El número de rastreo " + tracking + " ya está en uso.");
+        }
+
+        if (!dto.fechaEntregaEstimada().isAfter(dto.fechaDespacho())) {
+            throw new InvalidStateTransitionException(
+                    "La fecha de entrega estimada debe ser posterior a la fecha de despacho.");
+        }
+
+        Vehiculo vehiculo = vehiculoRepository.findById(dto.vehiculoId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No existe el vehiculo con ID " + dto.vehiculoId()));
+
+        Conductor conductor = conductorRepository.findById(dto.conductorId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No existe el conductor con ID " + dto.conductorId()));
+
+        BigDecimal pesoTotal = dto.paquetes().stream()
+                .map(PaqueteDTO::pesoKg)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        if (pesoTotal.compareTo(vehiculo.getCapacidadKg()) > 0) {
+            throw new InvalidStateTransitionException(
+                    "El peso total del envio (" + pesoTotal + " kg) supera la capacidad maxima del vehiculo "
+                            + vehiculo.getPlaca() + " (" + vehiculo.getCapacidadKg() + " kg).");
+        }
+
+        Envio envio = new Envio();
+        envio.setCodigoRastreo(tracking);
+        envio.setDireccionDestino(dto.direccionDestino());
+        envio.setPesoKg(pesoTotal);
+        envio.setCosto(dto.costo());
+        envio.setEstadoEnvio("PENDIENTE");
+        envio.setVehiculo(vehiculo);
+        envio.setConductor(conductor);
+        envio.setFechaDespacho(dto.fechaDespacho());
+        envio.setFechaEntregaEstimada(dto.fechaEntregaEstimada());
+
+        for (PaqueteDTO p : dto.paquetes()) {
+            Paquete paquete = new Paquete();
+            paquete.setDescripcion(p.descripcion().trim());
+            paquete.setPesoKg(p.pesoKg());
+            envio.agregarPaquete(paquete);
+        }
+
+        return envioRepository.save(envio);
     }
 
 }

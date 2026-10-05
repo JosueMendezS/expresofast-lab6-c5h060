@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Envio, CrearEnvioPayload } from '../models/envio.model';
+import { EnvioAvanzadoPayload, TrackingCheck } from '../models/envio-avanzado.model';
 
 @Injectable({ providedIn: 'root' })
 export class EnvioService {
@@ -23,5 +24,16 @@ export class EnvioService {
 
   actualizarEstado(id: number, nuevoEstado: string): Observable<Envio> {
     return this.http.patch<Envio>(`${this.baseUrl}/${id}/estado`, { nuevoEstado });
+  }
+  
+  // Lab 11 (endpoints bajo /api/envios)
+  verificarTracking(tracking: string): Observable<TrackingCheck> {
+    return this.http.get<TrackingCheck>(
+      `${environment.apiRootUrl}envios/check-tracking/${encodeURIComponent(tracking)}`
+    );
+  }
+
+  crearEnvioAvanzado(payload: EnvioAvanzadoPayload): Observable<Envio> {
+    return this.http.post<Envio>(`${environment.apiRootUrl}envios/avanzado`, payload);
   }
 }

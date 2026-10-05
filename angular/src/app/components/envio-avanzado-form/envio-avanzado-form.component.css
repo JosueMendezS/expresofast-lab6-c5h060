@@ -1,0 +1,102 @@
+.envio-form {
+    max-width: 720px;
+    margin: 1.5rem auto;
+    padding: 0 1rem;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-weight: 600;
+}
+
+input {
+    padding: 0.5rem;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    font: inherit;
+}
+
+input.ng-invalid.ng-touched {
+    border-color: #c62828;
+}
+
+.paquetes {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.paquete {
+    display: grid;
+    grid-template-columns: 2fr 1fr auto;
+    gap: 0.6rem;
+    align-items: end;
+}
+
+.btn-quitar {
+    background: #c62828;
+    color: #fff;
+    border: 0;
+    border-radius: 6px;
+    padding: 0.55rem 0.8rem;
+    cursor: pointer;
+}
+
+.btn-quitar:disabled {
+    background: #bbb;
+    cursor: not-allowed;
+}
+
+button {
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    border: 0;
+    cursor: pointer;
+    font: inherit;
+}
+
+button[type='submit'] {
+    background: #1565c0;
+    color: #fff;
+}
+
+button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.error {
+    color: #c62828;
+    font-weight: 400;
+}
+
+.hint {
+    color: #666;
+    font-weight: 400;
+}
+
+.error-global {
+    background: #ffebee;
+    color: #b71c1c;
+    border: 1px solid #ef9a9a;
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+}
+
+.exito {
+    background: #e8f5e9;
+    color: #1b5e20;
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+}

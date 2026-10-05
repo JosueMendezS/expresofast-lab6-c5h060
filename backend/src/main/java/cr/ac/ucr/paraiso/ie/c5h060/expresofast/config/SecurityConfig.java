@@ -78,6 +78,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/envios/optimizados")
                         .hasAnyRole("ADMIN", "OPERADOR", "CONDUCTOR")
+                        // Lab 11
+                        .requestMatchers(HttpMethod.GET, "/api/envios/check-tracking/*").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/envios/avanzado").permitAll()
+                        // ----
                         .requestMatchers(HttpMethod.POST, "/api/envios").hasAnyRole("ADMIN", "OPERADOR")
                         .requestMatchers(HttpMethod.PATCH, "/api/envios/*/estado").hasAnyRole("ADMIN", "CONDUCTOR")
                         .requestMatchers(HttpMethod.GET, "/api/envios/*/bitacora").hasAnyRole("ADMIN", "OPERADOR")

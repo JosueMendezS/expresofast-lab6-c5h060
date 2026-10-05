@@ -1,0 +1,106 @@
+<section class="envio-form">
+    <h2>Registrar Envío con Paquetes</h2>
+
+    <form [formGroup]="form" (ngSubmit)="registrar()">
+
+        <label>
+            Número de tracking
+            <input type="text" formControlName="numeroTracking" />
+            @if (form.controls.numeroTracking.pending) {
+            <small class="hint">Verificando disponibilidad...</small>
+            }
+            @if (form.controls.numeroTracking.touched || form.controls.numeroTracking.dirty) {
+            @if (form.controls.numeroTracking.hasError('required')) {
+            <small class="error">El número de tracking es obligatorio.</small>
+            }
+            @if (form.controls.numeroTracking.hasError('trackingTomado')) {
+            <small class="error">Este número de rastreo ya está en uso</small>
+            }
+            }
+        </label>
+
+        <label>
+            Dirección destino
+            <input type="text" formControlName="direccionDestino" />
+            @if (form.controls.direccionDestino.touched && form.controls.direccionDestino.invalid) {
+            <small class="error">La dirección es obligatoria.</small>
+            }
+        </label>
+
+        <label>
+            Costo (₡)
+            <input type="number" formControlName="costo" />
+            @if (form.controls.costo.touched && form.controls.costo.invalid) {
+            <small class="error">El costo debe ser mayor a cero.</small>
+            }
+        </label>
+
+        <label>
+            ID Vehículo
+            <input type="number" formControlName="vehiculoId" />
+            @if (form.controls.vehiculoId.touched && form.controls.vehiculoId.invalid) {
+            <small class="error">Indique un vehículo válido.</small>
+            }
+        </label>
+
+        <label>
+            ID Conductor
+            <input type="number" formControlName="conductorId" />
+            @if (form.controls.conductorId.touched && form.controls.conductorId.invalid) {
+            <small class="error">Indique un conductor válido.</small>
+            }
+        </label>
+
+        <label>
+            Fecha de despacho
+            <input type="date" formControlName="fechaDespacho" />
+        </label>
+
+        <label>
+            Fecha de entrega estimada
+            <input type="date" formControlName="fechaEntregaEstimada" />
+        </label>
+
+        @if (form.hasError('fechasInvalidas')) {
+        <div class="error-global" role="alert">
+            La fecha de entrega estimada debe ser posterior a la fecha de despacho.
+        </div>
+        }
+
+        <fieldset class="paquetes" formArrayName="paquetes">
+            <legend>Paquetes (peso total: {{ pesoTotal | number: '1.2-2' }} kg)</legend>
+
+            @for (paquete of paquetes.controls; track $index; let i = $index) {
+            <div class="paquete" [formGroupName]="i">
+                <label>
+                    Descripción
+                    <input type="text" formControlName="descripcion" />
+                    @if (paquete.controls.descripcion.touched && paquete.controls.descripcion.invalid) {
+                    <small class="error">La descripción es obligatoria.</small>
+                    }
+                </label>
+
+                <label>
+                    Peso (kg)
+                    <input type="number" step="0.01" formControlName="pesoKg" />
+                    @if (paquete.controls.pesoKg.touched && paquete.controls.pesoKg.invalid) {
+                    <small class="error">Peso entre 0.01 y 999.99 kg.</small>
+                    }
+                </label>
+
+                <button type="button" class="btn-quitar" (click)="eliminarPaquete(i)" [disabled]="paquetes.length === 1"
+                    title="Eliminar paquete">X</button>
+            </div>
+            }
+
+            <button type="button" (click)="agregarPaquete()">+ Añadir Paquete</button>
+        </fieldset>
+
+        <button type="submit" [disabled]="form.invalid || form.pending || enviando">
+            Registrar envío
+        </button>
+    </form>
+
+    @if (mensajeExito) { <p class="exito">{{ mensajeExito }}</p> }
+    @if (mensajeError) { <p class="error-global">{{ mensajeError }}</p> }
+</section>

@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import java.math.BigDecimal;
 
@@ -46,5 +49,25 @@ public class Envio extends AuditableEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "conductor_id")
     private Conductor conductor;
+
+    // Lab 11
+    @Column(name = "fecha_despacho")
+    private LocalDate fechaDespacho;
+
+    @Column(name = "fecha_entrega_estimada")
+    private LocalDate fechaEntregaEstimada;
+
+    @OneToMany(mappedBy = "envio", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Paquete> paquetes = new ArrayList<>();
+
+    public void agregarPaquete(Paquete paquete) {
+        paquetes.add(paquete);
+        paquete.setEnvio(this);
+    }
+
+    public void quitarPaquete(Paquete paquete) {
+        paquetes.remove(paquete);
+        paquete.setEnvio(null);
+    }
 
 }
